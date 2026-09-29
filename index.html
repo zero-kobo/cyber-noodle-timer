@@ -1,0 +1,342 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+
+<!-- OGP設定（※URL部分はご自身のGitHub Pagesの環境に合わせて変更してください） -->
+<meta property="og:title" content="デスクガジェット">
+<meta property="og:description" content="実務には1ミリも役立たない、無駄にサイバーパンクなカップ麺タイマー搭載ガジェット">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://【あなたのGitHubアカウント名】.github.io/【リポジトリ名】/">
+<meta property="og:image" content="https://【あなたのGitHubアカウント名】.github.io/【リポジトリ名】/ogp.png">
+<meta name="twitter:card" content="summary_large_image">
+
+<title>デスクガジェット</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@500;700;900&family=Share+Tech+Mono&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#070914; --panel:rgba(16,20,44,.72); --line:rgba(120,160,255,.22);
+  --cyan:#35e0ff; --amber:#ffb020; --pink:#ff3d8b; --lime:#5dffb0; --text:#e8f0ff; --sub:#8b98c9;
+  --disp:'Orbitron','Share Tech Mono',ui-monospace,Menlo,Consolas,monospace;
+  --mono:'Share Tech Mono',ui-monospace,Menlo,Consolas,monospace;
+  --ui:'Hiragino Kaku Gothic ProN','Yu Gothic',Meiryo,sans-serif;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html{height:100%}
+:root{padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+html{scroll-padding-top:env(safe-area-inset-top,0px)}
+body{
+  min-height:100%;color:var(--text);font-family:var(--ui);
+  background:
+    radial-gradient(900px 500px at 15% -10%,rgba(53,224,255,.16),transparent 60%),
+    radial-gradient(800px 500px at 110% 20%,rgba(255,61,139,.14),transparent 60%),
+    var(--bg);
+  display:flex;flex-direction:column;align-items:center;padding:22px 14px 40px;overflow-x:hidden;
+}
+/* 流れるグリッド */
+body::before{
+  content:"";position:fixed;inset:0;pointer-events:none;z-index:0;
+  background-image:linear-gradient(var(--line) 1px,transparent 1px),linear-gradient(90deg,var(--line) 1px,transparent 1px);
+  background-size:44px 44px;opacity:.35;
+  -webkit-mask-image:linear-gradient(to bottom,transparent,#000 30%,#000 70%,transparent);
+  mask-image:linear-gradient(to bottom,transparent,#000 30%,#000 70%,transparent);
+  animation:grid 6s linear infinite;
+}
+@keyframes grid{to{background-position:0 44px}}
+/* スキャンライン */
+body::after{
+  content:"";position:fixed;inset:0;pointer-events:none;z-index:5;
+  background:repeating-linear-gradient(to bottom,rgba(255,255,255,.028) 0 1px,transparent 1px 3px);
+}
+.wrap{position:relative;z-index:1;width:100%;max-width:460px;display:flex;flex-direction:column;gap:16px}
+
+/* ヘッダー */
+.head{display:flex;justify-content:space-between;align-items:flex-end;padding:0 4px}
+.logo{font-family:var(--disp);font-weight:900;font-size:1.5rem;letter-spacing:.14em;
+  background:linear-gradient(90deg,var(--cyan),#a88bff 55%,var(--pink));-webkit-background-clip:text;background-clip:text;color:transparent;
+  filter:drop-shadow(0 0 10px rgba(53,224,255,.45))}
+.logo small{display:block;font-family:var(--mono);font-weight:400;font-size:.68rem;letter-spacing:.12em;color:var(--sub);-webkit-text-fill-color:var(--sub);filter:none;margin-top:2px}
+.clock{font-family:var(--disp);font-size:1rem;color:var(--cyan);text-shadow:0 0 12px var(--cyan);text-align:right}
+.clock i{display:block;font-style:normal;font-family:var(--mono);font-size:.68rem;color:var(--lime);text-shadow:none}
+.clock i::before{content:"● ";animation:blink 1.2s steps(2) infinite}
+@keyframes blink{50%{opacity:.15}}
+
+/* パネル */
+.card{position:relative;background:var(--panel);backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);
+  border:1px solid var(--line);border-radius:6px 22px 6px 22px;padding:16px 16px 18px;
+  box-shadow:0 0 0 1px rgba(0,0,0,.4),0 18px 40px rgba(0,0,0,.5),inset 0 0 40px rgba(53,224,255,.04);
+  --glow:var(--amber)}
+.card::before,.card::after{content:"";position:absolute;width:16px;height:16px;border:2px solid var(--glow);opacity:.9;filter:drop-shadow(0 0 5px var(--glow));transition:border-color .3s}
+.card::before{top:-1px;left:-1px;border-right:0;border-bottom:0;border-top-left-radius:6px}
+.card::after{bottom:-1px;right:-1px;border-left:0;border-top:0;border-bottom-right-radius:22px}
+.card.sw{--glow:var(--cyan)} .card.calc{--glow:var(--pink)}
+.card-title{display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;font-size:.78rem;font-weight:700;letter-spacing:.1em;color:var(--sub)}
+.card-title b{color:var(--glow);font-family:var(--mono);font-weight:400;text-shadow:0 0 8px var(--glow)}
+.card-title span::before{content:"◢ ";color:var(--glow)}
+
+button{cursor:pointer;border:0;font:inherit;color:var(--text);user-select:none;-webkit-user-select:none;touch-action:manipulation;transition:transform .12s,box-shadow .2s,background .2s,filter .2s;-webkit-tap-highlight-color:transparent}
+button:active{transform:translateY(2px) scale(.97)}
+button:focus-visible{outline:2px solid var(--cyan);outline-offset:2px}
+
+/* 全リセット */
+.btn-reset-all{width:100%;padding:13px;font-weight:900;letter-spacing:.22em;font-size:.86rem;border-radius:4px 16px 4px 16px;
+  background:repeating-linear-gradient(-45deg,rgba(255,61,139,.16) 0 10px,rgba(255,61,139,.06) 10px 20px);
+  border:1px solid var(--pink);box-shadow:0 0 18px rgba(255,61,139,.3),inset 0 0 14px rgba(255,61,139,.15);text-shadow:0 0 8px var(--pink)}
+.btn-reset-all:hover{box-shadow:0 0 30px rgba(255,61,139,.6),inset 0 0 20px rgba(255,61,139,.3)}
+
+/* タイマー */
+.ring{position:relative;width:min(230px,68vw);aspect-ratio:1;margin:2px auto 8px}
+.ring svg{width:100%;height:100%;transform:rotate(-90deg);overflow:visible}
+.ring .track{fill:none;stroke:rgba(255,176,32,.12);stroke-width:8}
+.ring .bar{fill:none;stroke:url(#rg);stroke-width:8;stroke-linecap:round;stroke-dasharray:553;stroke-dashoffset:0;
+  filter:drop-shadow(0 0 8px var(--amber));transition:stroke-dashoffset .95s linear}
+.ring .ticks{fill:none;stroke:rgba(255,176,32,.35);stroke-width:6;stroke-dasharray:1.5 12.3}
+.ring-in{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center}
+.timer-display{font-family:var(--disp);font-weight:900;font-size:2.5rem;color:var(--amber);text-shadow:0 0 16px rgba(255,176,32,.75),0 0 40px rgba(255,176,32,.35);letter-spacing:.04em}
+.ring-in small{font-family:var(--mono);color:var(--sub);font-size:.7rem;letter-spacing:.2em;margin-top:2px}
+.ramen-status{text-align:center;min-height:30px;line-height:30px;font-weight:700;font-size:.95rem;color:#ffd32a;text-shadow:0 0 10px rgba(255,211,42,.5)}
+.card.done{--glow:var(--lime);animation:pulse 1s ease-in-out infinite}
+.card.over{--glow:var(--pink);animation:pulse .5s ease-in-out infinite}
+.card.done .timer-display{color:var(--lime);text-shadow:0 0 18px var(--lime)}
+.card.over .timer-display{color:var(--pink);text-shadow:0 0 18px var(--pink)}
+@keyframes pulse{50%{box-shadow:0 0 0 1px rgba(0,0,0,.4),0 0 34px color-mix(in srgb,var(--glow) 55%,transparent),inset 0 0 40px rgba(53,224,255,.04)}}
+.timer-controls{display:grid;grid-template-columns:1fr 1fr 1.5fr;gap:8px;margin-top:10px}
+.btn-timer,.btn-sw{padding:12px 0;font-weight:700;font-size:.85rem;border-radius:4px 12px 4px 12px;background:rgba(255,255,255,.05);border:1px solid var(--line)}
+.btn-timer:hover,.btn-sw:hover{background:rgba(255,255,255,.1);border-color:var(--glow)}
+.btn-main{background:linear-gradient(135deg,var(--amber),#ff7a2f)!important;color:#1a1000!important;border:0!important;box-shadow:0 0 20px rgba(255,176,32,.45);letter-spacing:.1em}
+.btn-main.running{background:rgba(255,255,255,.08)!important;color:var(--text)!important;box-shadow:inset 0 0 0 1px var(--amber)}
+
+/* ストップウォッチ */
+.sw-display{font-family:var(--disp);font-weight:700;font-size:clamp(1.5rem,8.4vw,2.05rem);text-align:center;color:var(--cyan);
+  text-shadow:0 0 14px rgba(53,224,255,.7),0 0 36px rgba(53,224,255,.3);padding:14px 6px;margin-bottom:12px;border-radius:4px 14px 4px 14px;
+  background:linear-gradient(180deg,rgba(53,224,255,.08),rgba(0,0,0,.35));border:1px solid rgba(53,224,255,.25);letter-spacing:.04em}
+.sw-display .ms{font-size:.68em;color:#a88bff;text-shadow:0 0 12px #a88bff}
+.sw-controls{display:grid;grid-template-columns:1.5fr 1fr;gap:8px}
+#swStartBtn.running{background:linear-gradient(135deg,var(--pink),#ff6a3d);border:0;box-shadow:0 0 20px rgba(255,61,139,.5)}
+#swStartBtn:not(.running){background:linear-gradient(135deg,var(--cyan),#5b8cff);color:#04101c;border:0;box-shadow:0 0 20px rgba(53,224,255,.4)}
+
+/* 電卓 */
+.calc-display{background:linear-gradient(180deg,rgba(0,0,0,.55),rgba(0,0,0,.3));border:1px solid rgba(255,61,139,.3);border-radius:4px 14px 4px 14px;
+  padding:10px 14px;text-align:right;margin-bottom:12px;min-height:72px;display:flex;flex-direction:column;justify-content:center;box-shadow:inset 0 0 22px rgba(255,61,139,.08)}
+.calc-history{font-family:var(--mono);font-size:.78rem;color:var(--sub);min-height:16px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.calc-main{font-family:var(--disp);font-size:1.35rem;font-weight:700;color:var(--lime);text-shadow:0 0 12px rgba(93,255,176,.6);overflow-x:auto;white-space:nowrap;scrollbar-width:none}
+.calc-main::-webkit-scrollbar{display:none}
+.calc-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:8px}
+.btn-calc{position:relative;overflow:hidden;padding:13px 0;font-family:var(--disp);font-size:1rem;font-weight:500;border-radius:4px 12px 4px 12px;
+  background:linear-gradient(180deg,rgba(255,255,255,.09),rgba(255,255,255,.03));border:1px solid var(--line);box-shadow:0 3px 0 rgba(0,0,0,.45)}
+.btn-calc:hover{border-color:var(--pink);box-shadow:0 0 14px rgba(255,61,139,.35),0 3px 0 rgba(0,0,0,.45)}
+.btn-calc.op{color:var(--cyan);text-shadow:0 0 8px var(--cyan);background:linear-gradient(180deg,rgba(53,224,255,.16),rgba(53,224,255,.04))}
+.btn-calc.frac{color:#ffd32a;text-shadow:0 0 8px #ffd32a;background:linear-gradient(180deg,rgba(255,211,42,.18),rgba(255,211,42,.04))}
+.btn-calc.eq{grid-column:span 2;color:#04140c;background:linear-gradient(135deg,var(--lime),#2bd4ff);border:0;box-shadow:0 0 22px rgba(93,255,176,.45)}
+.btn-calc .rp{position:absolute;border-radius:50%;background:rgba(255,255,255,.55);transform:scale(0);animation:rp .5s ease-out forwards;pointer-events:none}
+@keyframes rp{to{transform:scale(1);opacity:0}}
+
+/* 起動演出(1回だけ) */
+.wrap{animation:boot .9s cubic-bezier(.2,.8,.2,1) both}
+@keyframes boot{0%{opacity:0;filter:brightness(3) blur(6px);clip-path:inset(48% 0 48% 0)}60%{opacity:1;clip-path:inset(0 0 0 0)}100%{filter:none}}
+@media (prefers-reduced-motion:reduce){*,*::before,*::after{animation:none!important;transition:none!important}}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header class="head">
+    <div class="logo">DESK GADGET<small>デスクガジェット</small></div>
+    <div class="clock"><span id="clock">--:--:--</span><i>ONLINE</i></div>
+  </header>
+
+  <section><button class="btn-reset-all" onclick="resetEverything()">全機能一括リセット</button></section>
+
+  <section class="card" id="ramenCard">
+    <div class="card-title"><span>カップ麺専用タイマー</span><b id="targetRamenLabel">3分目安</b></div>
+    <div class="ring">
+      <svg viewBox="0 0 200 200" aria-hidden="true">
+        <defs><linearGradient id="rg" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#ffd32a"/><stop offset="1" stop-color="#ff5a3d"/></linearGradient></defs>
+        <circle class="ticks" cx="100" cy="100" r="96"/>
+        <circle class="track" cx="100" cy="100" r="88"/>
+        <circle class="bar" id="ringBar" cx="100" cy="100" r="88"/>
+      </svg>
+      <div class="ring-in"><div class="timer-display" id="timerDisplay">03:00</div><small>REMAINING</small></div>
+    </div>
+    <div class="ramen-status" id="ramenStatus">お湯を注いで待機中</div>
+    <div class="timer-controls">
+      <button class="btn-timer" onclick="setRamenTime(180,'3分')">3分</button>
+      <button class="btn-timer" onclick="setRamenTime(300,'5分')">5分</button>
+      <button class="btn-timer btn-main" id="timerStartBtn" onclick="toggleTimer()">スタート</button>
+    </div>
+  </section>
+
+  <section class="card sw">
+    <div class="card-title"><span>ストップウォッチ</span><b>1/100 SEC</b></div>
+    <div class="sw-display" id="swDisplay">00:00:00<span class="ms">.00</span></div>
+    <div class="sw-controls">
+      <button class="btn-sw" id="swStartBtn" onclick="toggleSW()">スタート</button>
+      <button class="btn-sw" onclick="resetSW()">リセット</button>
+    </div>
+  </section>
+
+  <section class="card calc">
+    <div class="card-title"><span>分数計算対応・電卓</span><b>[ / ] で分数入力</b></div>
+    <div class="calc-display">
+      <div class="calc-history" id="calcHistory"></div>
+      <div class="calc-main" id="calcMain">0</div>
+    </div>
+    <div class="calc-grid">
+      <button class="btn-calc frac" onclick="appendCalc('/')">/</button>
+      <button class="btn-calc op" onclick="clearCalc()">C</button>
+      <button class="btn-calc op" onclick="appendCalc('(')">(</button>
+      <button class="btn-calc op" onclick="appendCalc(')')">)</button>
+      <button class="btn-calc" onclick="appendCalc('7')">7</button>
+      <button class="btn-calc" onclick="appendCalc('8')">8</button>
+      <button class="btn-calc" onclick="appendCalc('9')">9</button>
+      <button class="btn-calc op" onclick="appendCalc('/')">÷</button>
+      <button class="btn-calc" onclick="appendCalc('4')">4</button>
+      <button class="btn-calc" onclick="appendCalc('5')">5</button>
+      <button class="btn-calc" onclick="appendCalc('6')">6</button>
+      <button class="btn-calc op" onclick="appendCalc('*')">×</button>
+      <button class="btn-calc" onclick="appendCalc('1')">1</button>
+      <button class="btn-calc" onclick="appendCalc('2')">2</button>
+      <button class="btn-calc" onclick="appendCalc('3')">3</button>
+      <button class="btn-calc op" onclick="appendCalc('-')">−</button>
+      <button class="btn-calc" onclick="appendCalc('0')">0</button>
+      <button class="btn-calc" onclick="appendCalc('.')">.</button>
+      <button class="btn-calc op" onclick="appendCalc('+')">+</button>
+      <button class="btn-calc eq" onclick="calculateResult()">=</button>
+    </div>
+  </section>
+</div>
+
+<!-- PRエリア（楽天アフィリエイト） -->
+<div style="width: 100%; max-width: 460px; text-align: center; margin-top: 30px; position: relative; z-index: 10;">
+  <div style="color: var(--sub); font-size: 1rem; letter-spacing: 0.1em; margin-bottom: 12px; font-family: var(--ui);">※PR</div>
+  <div style="display: flex; justify-content: center;">
+    <script type="text/javascript">rakuten_design="slide";rakuten_affiliateId="1713d060.335a82be.1713d061.5d5faf0d";rakuten_items="ctsmatch";rakuten_genreId="0";rakuten_size="320x48";rakuten_target="_blank";rakuten_theme="gray";rakuten_border="off";rakuten_auto_mode="on";rakuten_genre_title="off";rakuten_recommend="on";rakuten_ts="1790687991407";</script><script type="text/javascript" src="https://xml.affiliate.rakuten.co.jp/widget/js/rakuten_widget.js?20230106"></script>
+  </div>
+</div>
+
+<script>
+const $=id=>document.getElementById(id);
+const CIRC=553;
+
+/* 時計 */
+setInterval(()=>{$('clock').textContent=new Date().toLocaleTimeString('ja-JP',{hour12:false})},500);$('clock').textContent=new Date().toLocaleTimeString('ja-JP',{hour12:false});
+
+/* 電卓ボタンのリップル */
+document.querySelectorAll('.btn-calc').forEach(b=>b.addEventListener('pointerdown',e=>{
+  const r=b.getBoundingClientRect(),d=Math.max(r.width,r.height)*1.6,s=document.createElement('span');
+  s.className='rp';s.style.cssText=`width:${d}px;height:${d}px;left:${e.clientX-r.left-d/2}px;top:${e.clientY-r.top-d/2}px`;
+  b.appendChild(s);setTimeout(()=>s.remove(),500);
+}));
+
+/* 1. 全機能一括リセット */
+function resetEverything(){
+  clearCalc();resetTimer();resetSW();
+  const banner=$('ramenStatus');
+  banner.innerText="全機能をリセットしました";banner.style.color="var(--sub)";
+  setTimeout(()=>{banner.innerText="お湯を注いで待機中";banner.style.color="#ffd32a"},1200);
+}
+
+/* 2. カップ麺タイマー */
+let timerInitialSeconds=180,timerRemaining=180,timerInterval=null;
+function setStartBtn(text,running){const b=$('timerStartBtn');b.innerText=text;b.classList.toggle('running',running)}
+function setRamenTime(sec,label){
+  if(timerInterval)clearInterval(timerInterval);
+  timerInterval=null;setStartBtn('スタート',false);
+  timerInitialSeconds=sec;timerRemaining=sec;
+  $('targetRamenLabel').innerText=label+'目安';
+  updateTimerUI();
+  $('ramenStatus').innerText="お湯を注いで待機中";$('ramenStatus').style.color="#ffd32a";
+}
+function toggleTimer(){
+  if(timerInterval){
+    clearInterval(timerInterval);timerInterval=null;setStartBtn('再開',false);
+  }else{
+    timerInterval=setInterval(()=>{
+      timerRemaining--;updateTimerUI();
+      if(timerRemaining<=-60){clearInterval(timerInterval);timerInterval=null;$('timerStartBtn').innerText='終了';$('timerStartBtn').classList.remove('running')}
+    },1000);
+    setStartBtn('一時停止',true);
+  }
+}
+function resetTimer(){
+  if(timerInterval)clearInterval(timerInterval);
+  timerInterval=null;timerRemaining=timerInitialSeconds;
+  setStartBtn('スタート',false);updateTimerUI();
+  $('ramenStatus').innerText="お湯を注いで待機中";$('ramenStatus').style.color="#ffd32a";
+}
+function updateTimerUI(){
+  const abs=Math.abs(timerRemaining);
+  const m=String(Math.floor(abs/60)).padStart(2,'0'),s=String(abs%60).padStart(2,'0');
+  $('timerDisplay').innerText=(timerRemaining<0?'-':'')+`${m}:${s}`;
+  const frac=Math.max(0,Math.min(1,timerRemaining/timerInitialSeconds));
+  $('ringBar').style.strokeDashoffset=CIRC*(1-frac);
+  const card=$('ramenCard');
+  card.classList.toggle('done',timerRemaining<=0&&timerRemaining>-30);
+  card.classList.toggle('over',timerRemaining<=-30);
+  const elapsed=timerInitialSeconds-timerRemaining,banner=$('ramenStatus');
+  if(timerRemaining<=-30){banner.innerText="🍜 完全にのびのび（早く食べて！）";banner.style.color="#ff3d8b"}
+  else if(timerRemaining<=0){banner.innerText="✨ 完成！召し上がれ！";banner.style.color="#5dffb0"}
+  else{
+    const r=elapsed/timerInitialSeconds;banner.style.color="#ffd32a";
+    if(r<.15)banner.innerText="♨ 湯気立ち（まだ芯しかありません）";
+    else if(r<.35)banner.innerText="🥢 粉落とし〜針金レベル（博多風）";
+    else if(r<.6)banner.innerText="⚡ バリカタ（噛みごたえ抜群）";
+    else if(r<.85)banner.innerText="⏱ カタめ（通好みの硬さ）";
+    else banner.innerText="⌛ まもなくジャスト（箸を用意！）";
+  }
+}
+
+/* 3. 分数電卓 */
+let calcExpression="";
+function appendCalc(v){
+  if(calcExpression==="0"&&v!==".")calcExpression="";
+  calcExpression+=v;$('calcMain').innerText=calcExpression;
+}
+function clearCalc(){calcExpression="";$('calcMain').innerText="0";$('calcHistory').innerText=""}
+function gcd(a,b){return b?gcd(b,a%b):Math.abs(a)}
+function toFraction(val){
+  if(Number.isInteger(val))return String(val);
+  const p=1e-6;let h1=1,h2=0,k1=0,k2=1,b=val;
+  do{
+    let a=Math.floor(b),x=h1;h1=a*h1+h2;h2=x;x=k1;k1=a*k1+k2;k2=x;b=1/(b-a);
+  }while(Math.abs(val-h1/k1)>val*p&&k1<10000);
+  const c=gcd(h1,k1),n=h1/c,d=k1/c;
+  return d===1?`${n}`:`${n}/${d}`;
+}
+function calculateResult(){
+  if(!calcExpression)return;
+  try{
+    const san=calcExpression.replace(/[^0-9+\-*/().]/g,'');
+    const raw=Function(`'use strict'; return (${san})`)();
+    $('calcHistory').innerText=calcExpression+" =";
+    $('calcMain').innerText=`${toFraction(raw)} (${raw})`;
+    calcExpression=String(raw);
+  }catch(e){$('calcMain').innerText="Error";calcExpression=""}
+}
+
+/* 4. ストップウォッチ */
+let swStartTime=0,swElapsedTime=0,swInterval=null;
+function toggleSW(){
+  const b=$('swStartBtn');
+  if(swInterval){clearInterval(swInterval);swInterval=null;b.innerText='スタート';b.classList.remove('running')}
+  else{
+    swStartTime=performance.now()-swElapsedTime;
+    swInterval=setInterval(()=>{swElapsedTime=performance.now()-swStartTime;updateSWUI()},30);
+    b.innerText='ストップ';b.classList.add('running');
+  }
+}
+function resetSW(){
+  if(swInterval)clearInterval(swInterval);
+  swInterval=null;swElapsedTime=0;
+  const b=$('swStartBtn');b.innerText='スタート';b.classList.remove('running');updateSWUI();
+}
+function updateSWUI(){
+  const t=Math.floor(swElapsedTime),ms=String(Math.floor((t%1000)/10)).padStart(2,'0');
+  const ts=Math.floor(t/1000),s=String(ts%60).padStart(2,'0'),m=String(Math.floor(ts/60)%60).padStart(2,'0'),h=String(Math.floor(ts/3600)).padStart(2,'0');
+  $('swDisplay').innerHTML=`${h}:${m}:${s}<span class="ms">.${ms}</span>`;
+}
+updateTimerUI();
+</script>
+</body>
+</html>
